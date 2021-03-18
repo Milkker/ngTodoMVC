@@ -15,4 +15,8 @@ export class TodosComponent implements OnInit {
   ngOnInit(): void {
     this.todos = this.todoService.getTodos();
   }
+
+  toggle(todo: Todo){
+    this.todoService.toggle(todo);
+  }
 }

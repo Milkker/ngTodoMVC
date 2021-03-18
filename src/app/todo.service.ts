@@ -6,10 +6,28 @@ import { Todo } from './todo';
   providedIn: 'root'
 })
 export class TodoService {
+  private todos: Todo[] = TODOS;
 
   constructor() { }
 
   getTodos(): Todo[] {
-    return TODOS;
+    return this.todos;
   }
+
+  add(todo: Todo) {
+    this.todos.push(todo);
+  }
+
+  toggle(todo: Todo) {
+    todo.completed = !todo.completed;
+  }
+
+  completed(todo: Todo) {
+    todo.completed = true;
+  }
+
+  delete(id: number) {
+    this.todos.splice(this.todos.findIndex(m => m.id === id), 1);
+  }
+    
 }

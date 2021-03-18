@@ -1,1 +1,5 @@
-<span>{{todo.name}}</span>
+<div class="view"  [class.completed]="todo.completed">
+    <input type="checkbox" class="toggle" [checked]="todo.completed" (click)="toggle(todo)"/>
+    {{ todo.name }}
+    <button (click)="remove(todo)" class="destroy">&times;</button>
+</div>

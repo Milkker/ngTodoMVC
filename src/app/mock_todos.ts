@@ -1,6 +1,6 @@
 import { Todo } from "./todo";
 
 export const TODOS: Todo[]  = [
-    { name: "Job1", completed: false },
-    { name: "Job2", completed: false },
+    { id: 1, name: "Job1", completed: false },
+    { id: 2, name: "Job2", completed: false },
 ]
