@@ -1,0 +1,11 @@
+<header class="header">
+    <h1>todos</h1>
+    <input class="new-todo" placeholder="what need to be done?" />
+</header>
+<section class="main">
+    <ul class="todo-list">
+        <li *ngFor="let todo in todos">
+            <app-todo [todo]="todo"></app-todo>
+        </li>
+    </ul>
+</section>
