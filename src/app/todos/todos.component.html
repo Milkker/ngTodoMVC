@@ -4,7 +4,7 @@
 </header>
 <section class="main">
     <ul class="todo-list">
-        <li *ngFor="let todo in todos">
+        <li *ngFor="let todo of todos">
             <app-todo [todo]="todo"></app-todo>
         </li>
     </ul>

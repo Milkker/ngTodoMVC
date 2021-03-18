@@ -1,11 +1,7 @@
-export class Todo {
+export interface Todo {
     /** 工作名稱 */
-    name?: string;
+    name: string;
 
     /** 完成與否 */
     completed: boolean;
-
-    constructor() {
-        this.completed = false;
-    }
 }

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Todo } from "../todo";
+import { TODOS } from "../mock_todos";
 
 @Component({
   selector: 'app-todos',
@@ -12,6 +13,6 @@ export class TodosComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+    this.todos = TODOS;
   }
-
 }
