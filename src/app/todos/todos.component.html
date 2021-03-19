@@ -1,6 +1,8 @@
 <header class="header">
     <h1>todos</h1>
-    <input class="new-todo" placeholder="what need to be done?" />
+    <input class="new-todo" placeholder="what need to be done?" 
+    [(ngModel)]="newTodo"
+    (keyup.enter)="add(newTodo)" />
 </header>
 <section class="main">
     <ul class="todo-list">

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Todo } from "../todo";
 import { TodoService } from '../todo.service';
 
@@ -8,6 +8,7 @@ import { TodoService } from '../todo.service';
   styleUrls: ['./todos.component.scss']
 })
 export class TodosComponent implements OnInit {
+  @Input() newTodo: string = "";
   todos: Todo[] = [];
 
   constructor(private todoService: TodoService) { }
@@ -16,7 +17,17 @@ export class TodosComponent implements OnInit {
     this.todos = this.todoService.getTodos();
   }
 
-  toggle(todo: Todo){
+  add(newTodo: string) {
+    newTodo = newTodo || "";
+
+    if (!newTodo)
+      return;
+
+    this.todoService.add(newTodo);
+    this.newTodo = "";
+  }
+
+  toggle(todo: Todo) {
     this.todoService.toggle(todo);
   }
 }
