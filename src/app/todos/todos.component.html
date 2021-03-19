@@ -1,21 +1,22 @@
-<header class="header">
-    <h1>todos</h1>
-    <input class="new-todo" placeholder="what need to be done?" 
-    [(ngModel)]="newTodo"
-    (keyup.enter)="add(newTodo)" />
-</header>
-<section class="main">
-    <ul class="todo-list">
-        <li *ngFor="let todo of todos">
-            <app-todo [todo]="todo"></app-todo>
-        </li>
-    </ul>
+<section class="todoapp">
+    <header class="header">
+        <h1>todos</h1>
+        <input class="new-todo" placeholder="what need to be done?" [(ngModel)]="newTodo"
+            (keyup.enter)="add(newTodo)" />
+    </header>
+    <section class="main">
+        <ul class="todo-list">
+            <li *ngFor="let todo of todos">
+                <app-todo [todo]="todo"></app-todo>
+            </li>
+        </ul>
+    </section>
+    <footer *ngIf="todos.length > 0" class="footer">
+        <span class="todo-count"><strong>{{ remaining }}</strong> item{{ remaining > 1 ? 's' : '' }} left</span>
+        <ul class="filters">
+            <li><a [routerLink]="['/']">All</a></li>
+            <li><a [routerLink]="['/active']">Active</a></li>
+            <li><a [routerLink]="['/complted']">Completed</a></li>
+        </ul>
+    </footer>
 </section>
-<footer *ngIf="todos.length > 0"  class="footer">
-    <span class="todo-count"><strong>{{ remaining }}</strong> item{{ remaining > 1 ? 's' : '' }} left</span>
-    <ul class="filters">
-        <li><a [routerLink]="['/']">All</a></li>
-        <li><a [routerLink]="['/active']">Active</a></li>
-        <li><a [routerLink]="['/complted']">Completed</a></li>
-    </ul>
-</footer>

@@ -1,3 +1,27 @@
+.todoapp {
+    background: #fff;
+    margin: 130px 0 40px 0;
+    position: relative;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 25px 50px 0 rgba(0, 0, 0, 0.1);
+
+    input &::-webkit-input-placeholder {
+        font-style: italic;
+        font-weight: 300;
+        color: #e6e6e6;
+    }
+    &::-moz-placeholder {
+        font-style: italic;
+        font-weight: 300;
+        color: #e6e6e6;
+    }
+
+    &::placeholder {
+        font-style: italic;
+        font-weight: 300;
+        color: #e6e6e6;
+    }
+}
+
 .header {
     h1 {
         position: absolute;
@@ -50,26 +74,45 @@
 }
 
 .footer {
+    color: #777;
     text-align: center;
-    .todo-count {
-        float: left;
-        text-align: left;
-    }
+    border-top: 1px solid #e6e6e6;
+    padding: 10px 15px;
+    height: 20px;
 
-    .filters {
-        left: 0;
-        right: 0;
-        margin: 0;
-        padding: 0;
-        list-style: none;
+    &::before {
+        content: '';
         position: absolute;
-        background-origin: padding-box;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        height: 50px;
+        overflow: hidden;
+        box-shadow: 0 1px 1px rgb(0 0 0 / 20%),
+        0 8px 0 -3px #f6f6f6,
+        0 9px 1px -3px rgb(0 0 0 / 20%),
+        0 16px 0 -6px #f6f6f6,
+        0 17px 2px -6px rgb(0 0 0 / 20%);
+    }
+}
 
-        li {
-            display: inline-block;
-            a {
-                padding: 3px 7px;
-            }
+.todo-count {
+    float: left;
+    text-align: left;
+}
+
+.filters {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    position: absolute;
+    left: 0;
+    right: 0;
+
+    li {
+        display: inline-block;
+        a {
+            padding: 3px 7px;
         }
     }
 }
