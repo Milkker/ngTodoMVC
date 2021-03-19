@@ -15,10 +15,11 @@ export class TodoService {
   }
 
   add(newTodo: string) {
-    let todo:Todo = { id: -1, name: newTodo, completed: false };
-
-    //取得下一個id
-    todo.id = this.todos.reduce((maxId, curr) => curr.id > maxId ? curr.id : maxId, -1) + 1;
+    let todo:Todo = { 
+      id: this.todos.reduce((maxId, curr) => curr.id > maxId ? curr.id : maxId, -1) + 1,
+      name: newTodo,
+      completed: false
+    };
 
     this.todos.push(todo);
   }
