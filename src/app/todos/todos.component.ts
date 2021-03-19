@@ -22,6 +22,10 @@ export class TodosComponent implements OnInit {
     this.remaining = this.todos.filter(todo => !todo.completed).length || 0;
   }
 
+  toggleAll(checked: boolean) {
+    this.todoService.toggleAll(checked);
+  }
+
   add(newTodo: string) {
     newTodo = newTodo || "";
 

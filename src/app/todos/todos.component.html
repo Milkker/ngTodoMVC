@@ -1,11 +1,12 @@
 <section class="todoapp">
     <header class="header">
         <h1>todos</h1>
-        <input class="new-todo" placeholder="what need to be done?" [(ngModel)]="newTodo"
-            (keyup.enter)="add(newTodo)" />
+        <input class="new-todo" placeholder="what need to be done?"
+          #todo [(ngModel)]="newTodo" (keyup.enter)="add(todo.value)" />
     </header>
     <section class="main" style="display: block;">
-        <input id="toggle-all" class="toggle-all" type="checkbox" />
+        <input id="toggle-all" 
+            #inputToggleAll class="toggle-all" type="checkbox" (change)="toggleAll(inputToggleAll.checked)"/>
         <label for="toggle-all"></label>
         <ul class="todo-list">
             <li *ngFor="let todo of todos">

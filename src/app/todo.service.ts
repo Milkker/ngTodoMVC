@@ -35,5 +35,9 @@ export class TodoService {
   delete(id: number) {
     this.todos.splice(this.todos.findIndex(m => m.id === id), 1);
   }
+
+  toggleAll(checked: boolean) {
+    this.todos.forEach(todo => todo.completed = checked);
+  }
     
 }
