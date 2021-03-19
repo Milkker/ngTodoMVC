@@ -10,11 +10,16 @@ import { TodoService } from '../todo.service';
 export class TodosComponent implements OnInit {
   @Input() newTodo: string = "";
   todos: Todo[] = [];
+  remaining: any;
 
   constructor(private todoService: TodoService) { }
 
   ngOnInit(): void {
     this.todos = this.todoService.getTodos();
+  }
+
+  ngDoCheck(): void {
+    this.remaining = this.todos.filter(todo => !todo.completed).length || 0;
   }
 
   add(newTodo: string) {
