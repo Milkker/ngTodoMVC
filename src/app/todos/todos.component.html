@@ -4,7 +4,9 @@
         <input class="new-todo" placeholder="what need to be done?" [(ngModel)]="newTodo"
             (keyup.enter)="add(newTodo)" />
     </header>
-    <section class="main">
+    <section class="main" style="display: block;">
+        <input id="toggle-all" class="toggle-all" type="checkbox" />
+        <label for="toggle-all"></label>
         <ul class="todo-list">
             <li *ngFor="let todo of todos">
                 <app-todo [todo]="todo"></app-todo>
