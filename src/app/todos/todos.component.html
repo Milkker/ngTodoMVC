@@ -26,5 +26,6 @@
             <li><a [routerLink]="['/active']">Active</a></li>
             <li><a [routerLink]="['/complted']">Completed</a></li>
         </ul>
+        <button class="clear-complted" *ngIf="compltedCount > 0" (click)="clearCompleted()">Clear completed</button>
     </footer>
 </section>

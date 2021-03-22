@@ -39,5 +39,13 @@ export class TodoService {
   toggleAll(checked: boolean) {
     this.todos.forEach(todo => todo.completed = checked);
   }
+
+  clearCompleted() {
+    let compltedIds = this.todos.filter(todo => !!todo.completed).map(todo => todo.id);
+
+    compltedIds.forEach(id => this.delete(id));
+
+    console.log(compltedIds);
+  }
     
 }

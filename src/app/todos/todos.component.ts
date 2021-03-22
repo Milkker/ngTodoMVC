@@ -10,7 +10,8 @@ import { TodoService } from '../todo.service';
 export class TodosComponent implements OnInit {
   @Input() newTodo: string = "";
   todos: Todo[] = [];
-  remaining: any;
+  remaining: Number;
+  compltedCount: Number;
 
   constructor(private todoService: TodoService) { }
 
@@ -20,6 +21,7 @@ export class TodosComponent implements OnInit {
 
   ngDoCheck(): void {
     this.remaining = this.todos.filter(todo => !todo.completed).length || 0;
+    this.compltedCount = this.todos.filter(todo => !!todo.completed).length || 0;
   }
 
   toggleAll(checked: boolean) {
@@ -42,5 +44,9 @@ export class TodosComponent implements OnInit {
 
     this.todoService.add(newTodo);
     this.newTodo = "";
+  }
+
+  clearCompleted() {
+    this.todoService.clearCompleted();
   }
 }
