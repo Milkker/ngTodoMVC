@@ -1,6 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Todo } from "../todo";
 import { TodoService } from '../todo.service';
+import { ActivatedRoute } from '@angular/router';
+import { ɵangular_packages_platform_browser_platform_browser_j } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-todos',
@@ -12,11 +14,28 @@ export class TodosComponent implements OnInit {
   todos: Todo[] = [];
   remaining: Number;
   compltedCount: Number;
+  filter: string;
+  filteredTodos: Todo[];
 
-  constructor(private todoService: TodoService) { }
+  constructor(private todoService: TodoService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     this.todos = this.todoService.getTodos();
+    this.route.params.subscribe(params => {
+      this.filter = params["filter"];
+
+      switch (this.filter) {
+        case "active":
+          this.filteredTodos = this.todos.filter(todo => !todo.completed);
+          break;
+        case "completed":
+          this.filteredTodos = this.todos.filter(todo => !!todo.completed);
+          break;
+        default:
+          this.filteredTodos = this.todos;
+          break;
+      }
+    });
   }
 
   ngDoCheck(): void {
