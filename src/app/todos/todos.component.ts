@@ -26,6 +26,14 @@ export class TodosComponent implements OnInit {
     this.todoService.toggleAll(checked);
   }
 
+  toggle(todo: Todo) {
+    todo.completed = !todo.completed;
+  }
+
+  remove(todo: Todo) {
+    this.todoService.delete(todo.id);
+  }
+
   add(newTodo: string) {
     newTodo = newTodo || "";
 
@@ -34,9 +42,5 @@ export class TodosComponent implements OnInit {
 
     this.todoService.add(newTodo);
     this.newTodo = "";
-  }
-
-  toggle(todo: Todo) {
-    this.todoService.toggle(todo);
   }
 }

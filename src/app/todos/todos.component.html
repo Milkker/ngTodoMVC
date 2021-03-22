@@ -1,16 +1,21 @@
 <section class="todoapp">
     <header class="header">
         <h1>todos</h1>
-        <input class="new-todo" placeholder="what need to be done?"
-          #todo [(ngModel)]="newTodo" (keyup.enter)="add(todo.value)" />
+        <input class="new-todo" placeholder="what need to be done?" #todo [(ngModel)]="newTodo"
+            (keyup.enter)="add(todo.value)" />
     </header>
     <section class="main" style="display: block;">
-        <input id="toggle-all" 
-            #inputToggleAll class="toggle-all" type="checkbox" (change)="toggleAll(inputToggleAll.checked)"/>
+        <input id="toggle-all" #inputToggleAll class="toggle-all" type="checkbox"
+            (change)="toggleAll(inputToggleAll.checked)" />
         <label for="toggle-all"></label>
         <ul class="todo-list">
             <li *ngFor="let todo of todos">
-                <app-todo [todo]="todo"></app-todo>
+                <!-- <app-todo [todo]="todo"></app-todo> -->
+                <div class="view" [class.completed]="todo.completed">
+                    <input type="checkbox" class="toggle" [checked]="todo.completed" (change)="toggle(todo)" />
+                    <label>{{ todo.name }}</label>
+                    <button class="destroy" (click)="remove(todo)"></button>
+                </div>
             </li>
         </ul>
     </section>
