@@ -4,7 +4,8 @@ import { TodosComponent } from "./todos/todos.component";
 
 const routes: Routes = [
   { path: '', component: TodosComponent, pathMatch: 'full' },
-  { path: ':filter', component: TodosComponent }
+  { path: ':filter', component: TodosComponent, pathMatch: 'full'},
+  { path: ':filter/:page', component: TodosComponent }
 ];
 
 @NgModule({

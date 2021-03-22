@@ -9,19 +9,18 @@
             (change)="toggleAll(inputToggleAll.checked)" />
         <label for="toggle-all"></label>
         <ul class="todo-list">
-            <li *ngFor="let todo of filteredTodos">
+            <li *ngFor="let todo of pagingTodos">
                 <div class="view" *ngIf="todo.id !== (currentTodo || {}).id" [class.completed]="todo.completed">
                     <input type="checkbox" class="toggle" [checked]="todo.completed" (change)="toggle(todo)" />
                     <label (dblclick)="editTodo(todo)">{{ todo.name }}</label>
                     <button class="destroy" (click)="remove(todo)"></button>
                 </div>
                 <input class="edit" *ngIf="todo.id === (currentTodo || {}).id" [(ngModel)]="currentTodo.name"
-                    (keyup.esc)="cancelEdit()" 
-                    (keyup.enter)="update(currentTodo)"
-                    autofocus />
+                    (keyup.esc)="cancelEdit()" (keyup.enter)="update(currentTodo)" autofocus />
             </li>
         </ul>
     </section>
+    <app-pagination [pagination]="pagination" (pageChange)="goToPage($event)"></app-pagination>
     <footer *ngIf="todos.length > 0" class="footer">
         <span class="todo-count"><strong>{{ remaining }}</strong> item{{ remaining > 1 ? 's' : '' }} left</span>
         <ul class="filters">

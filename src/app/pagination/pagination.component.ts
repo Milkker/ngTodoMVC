@@ -1,5 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { range } from 'rxjs';
+import { Pagination } from '../pagination.model';
 
 @Component({
   selector: 'app-pagination',
@@ -7,9 +8,12 @@ import { range } from 'rxjs';
   styleUrls: ['./pagination.component.scss']
 })
 export class PaginationComponent implements OnInit {
-  @Input() count: number = 1000;
-  @Input() currentPage: number = 1;
-  @Input() pageSize: number = 5;
+  @Input() pagination: Pagination = {
+    count: 1000,
+    currentPage: 1,
+    pageSize: 5
+  }
+  @Output() pageChange = new EventEmitter<number>();
   maxPage: number;
   pages: number[];
 
@@ -19,15 +23,19 @@ export class PaginationComponent implements OnInit {
   }
 
   ngDoCheck(): void {
-    this.maxPage = Math.ceil(this.count / this.pageSize);
+    this.maxPage = Math.ceil(this.pagination.count / this.pagination.pageSize);
 
-    if (this.currentPage > this.maxPage) {
-      this.currentPage = this.maxPage;
+    if (this.pagination.currentPage > this.maxPage) {
+      this.pagination.currentPage = this.maxPage;
     }
 
+    this.setPageList();
+  }
+
+  setPageList() {
     this.pages = [];
-    let beginPage = this.currentPage - 2;
-    let endPage = this.currentPage + 2;
+    let beginPage = this.pagination.currentPage - 2;
+    let endPage = this.pagination.currentPage + 2;
 
     if (beginPage < 1)
       beginPage = 1;
@@ -39,13 +47,31 @@ export class PaginationComponent implements OnInit {
   }
 
   prev() {
-    if (this.currentPage > 1)
-      this.currentPage -= 1;
+    if (this.pagination.currentPage <= 1)
+      return;
+
+    this.goToPage(this.pagination.currentPage - 1);
   }
 
   next() {
-    if (this.currentPage < this.maxPage)
-      this.currentPage++;
+    if (this.pagination.currentPage >= this.maxPage)
+      return;
+
+    this.goToPage(this.pagination.currentPage + 1);
+  }
+
+  goToPage(page: number) {
+    if (page < 1)
+      page = 1;
+
+    if (page > this.maxPage)
+      page = this.maxPage;
+
+    if (this.pagination.currentPage == page)
+      return;
+
+    this.pagination.currentPage = page;
+    this.pageChange.emit(page);
   }
 
 }

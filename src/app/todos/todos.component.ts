@@ -1,7 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Todo } from "../todo";
 import { TodoService } from '../todo.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Pagination, UtilsPagination  } from "../pagination.model";
 
 @Component({
   selector: 'app-todos',
@@ -9,6 +10,13 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./todos.component.scss']
 })
 export class TodosComponent implements OnInit {
+  pagination: Pagination = {
+    count: 0,
+    currentPage: 1,
+    pageSize: 5,
+  }
+  pagingTodos: Todo[];
+
   @Input() newTodo: string = "";
   todos: Todo[] = [];
   remaining: Number;
@@ -19,12 +27,12 @@ export class TodosComponent implements OnInit {
   currentTodo?: Todo;
   edit: boolean = false;
 
-  constructor(private todoService: TodoService, private route: ActivatedRoute) { }
+  constructor(private todoService: TodoService, private router: Router, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     this.todos = this.todoService.getTodos();
     this.route.params.subscribe(params => {
-      this.filter = params["filter"];
+      this.filter = params["filter"] || "all";
 
       switch (this.filter) {
         case "active":
@@ -37,12 +45,16 @@ export class TodosComponent implements OnInit {
           this.filteredTodos = this.todos;
           break;
       }
+
+      this.pagination.currentPage = +(params["page"] || 1);
     });
   }
 
   ngDoCheck(): void {
     this.remaining = this.todos.filter(todo => !todo.completed).length || 0;
     this.compltedCount = this.todos.filter(todo => !!todo.completed).length || 0;
+    this.pagination.count = this.filteredTodos.length || 0;
+    this.pagingTodos = UtilsPagination.GetPageData(this.filteredTodos, this.pagination);
   }
 
   toggleAll(checked: boolean) {
@@ -53,19 +65,19 @@ export class TodosComponent implements OnInit {
     todo.completed = !todo.completed;
   }
 
-  editTodo(todo: Todo){
+  editTodo(todo: Todo) {
     this.snapshot = Object.assign({}, todo)
     this.currentTodo = Object.assign({}, todo)
     this.edit = true;
   }
-  
-  cancelEdit(){
+
+  cancelEdit() {
     this.snapshot = null;
     this.currentTodo = null;
     this.edit = false;
   }
 
-  update(todo: Todo){
+  update(todo: Todo) {
     this.todoService.update(todo);
     this.snapshot = null;
     this.currentTodo = null;
@@ -88,5 +100,9 @@ export class TodosComponent implements OnInit {
 
   clearCompleted() {
     this.todoService.clearCompleted();
+  }
+
+  goToPage(page: number) {
+    this.router.navigate(['/', this.filter, page], { relativeTo: this.route });
   }
 }
