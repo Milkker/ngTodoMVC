@@ -10,7 +10,6 @@
         <label for="toggle-all"></label>
         <ul class="todo-list">
             <li *ngFor="let todo of todos">
-                <!-- <app-todo [todo]="todo"></app-todo> -->
                 <div class="view" [class.completed]="todo.completed">
                     <input type="checkbox" class="toggle" [checked]="todo.completed" (change)="toggle(todo)" />
                     <label>{{ todo.name }}</label>
