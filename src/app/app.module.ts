@@ -5,11 +5,13 @@ import { FormsModule } from '@angular/forms';
 import { AppComponent } from './app.component';
 import { TodosComponent } from './todos/todos.component';
 import { AppRoutingModule } from './app-routing.module';
+import { PaginationComponent } from './pagination/pagination.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    TodosComponent
+    TodosComponent,
+    PaginationComponent
   ],
   imports: [
     BrowserModule,

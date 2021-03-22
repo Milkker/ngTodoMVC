@@ -1,0 +1,7 @@
+<div class="pagination">
+    <ul class="page-list">
+        <li *ngFor="let page of pages" [class.active]="page == currentPage"><a>{{page}}</a></li>
+    </ul>
+    <button class="prev-page" (click)="prev()"></button>
+    <button class="next-page" (click)="next()"></button>
+</div>
