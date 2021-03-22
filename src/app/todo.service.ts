@@ -15,13 +15,22 @@ export class TodoService {
   }
 
   add(newTodo: string) {
-    let todo:Todo = { 
+    let todo: Todo = {
       id: this.todos.reduce((maxId, curr) => curr.id > maxId ? curr.id : maxId, -1) + 1,
       name: newTodo,
       completed: false
     };
 
     this.todos.push(todo);
+  }
+
+  update(newTodo: Todo) {
+    let oldTodo = this.todos.find(todo => todo.id === newTodo.id);
+
+    if (!oldTodo)
+      return;
+
+    oldTodo.name = newTodo.name;
   }
 
   toggle(todo: Todo) {
@@ -47,5 +56,5 @@ export class TodoService {
 
     console.log(compltedIds);
   }
-    
+
 }

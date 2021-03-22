@@ -2,7 +2,6 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Todo } from "../todo";
 import { TodoService } from '../todo.service';
 import { ActivatedRoute } from '@angular/router';
-import { ɵangular_packages_platform_browser_platform_browser_j } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-todos',
@@ -16,6 +15,9 @@ export class TodosComponent implements OnInit {
   compltedCount: Number;
   filter: string;
   filteredTodos: Todo[];
+  snapshot?: Todo;
+  currentTodo?: Todo;
+  edit: boolean = false;
 
   constructor(private todoService: TodoService, private route: ActivatedRoute) { }
 
@@ -49,6 +51,25 @@ export class TodosComponent implements OnInit {
 
   toggle(todo: Todo) {
     todo.completed = !todo.completed;
+  }
+
+  editTodo(todo: Todo){
+    this.snapshot = Object.assign({}, todo)
+    this.currentTodo = Object.assign({}, todo)
+    this.edit = true;
+  }
+  
+  cancelEdit(){
+    this.snapshot = null;
+    this.currentTodo = null;
+    this.edit = false;
+  }
+
+  update(todo: Todo){
+    this.todoService.update(todo);
+    this.snapshot = null;
+    this.currentTodo = null;
+    this.edit = false;
   }
 
   remove(todo: Todo) {
