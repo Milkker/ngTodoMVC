@@ -91,11 +91,11 @@ export class TodoService {
     );
   }
 
-  clearCompleted(todos: Todo[]) {
-    let compltedIds = todos.filter(todo => !!todo.completed).map(todo => todo.id);
+  clearCompleted() {
+    var url = `${this.todoUrl}?completed=true`;
 
-    return combineLatest(compltedIds.map(id => this.delete(id))).pipe(
-      tap(todos => console.log(todos))
+    return this.http.get<Todo[]>(url, this.httpOptions).pipe(
+      tap((todos) => todos.forEach(todo => this.delete(todo.id).subscribe()))
     );
   }
 

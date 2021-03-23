@@ -142,7 +142,7 @@ export class TodosComponent implements OnInit {
   }
 
   clearCompleted() {
-    this.todoService.clearCompleted(this.todos).subscribe(todos => {
+    this.todoService.clearCompleted().subscribe(todos => {
       this.refreash();
     })
   }
