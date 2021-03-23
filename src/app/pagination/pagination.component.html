@@ -1,7 +1,9 @@
-<div class="pagination">
+<div class="pagination" *ngIf="pages.length > 1">
     <ul class="page-list">
-        <li *ngFor="let page of pages" [class.active]="page == pagination.currentPage">
-            <a (click)="goToPage(page)">{{page}}</a>
+        <li *ngFor="let page of pages" 
+            [class.active]="page == pagination.currentPage"
+            (click)="goToPage(page)">
+            {{page}}
         </li>
     </ul>
     <button class="prev-page" (click)="prev()"></button>
