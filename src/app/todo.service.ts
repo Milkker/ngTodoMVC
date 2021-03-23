@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Todo } from './todo';
+import { Todo, UtilsTodo } from './todo.model';
 import { combineLatest, Observable, of } from "rxjs";
-import { catchError, map, tap } from "rxjs/operators";
+import { map, switchMap, tap } from "rxjs/operators";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
-
-
+import { flatten } from '@angular/compiler';
 
 @Injectable({
   providedIn: 'root'
@@ -38,23 +37,12 @@ export class TodoService {
       .pipe(
         map(todos => ({
           totalCount: todos.length || 0,
-          filteredCount: todos.filter(todo => this.accept(todo, filter)).length || 0,
+          filteredCount: todos.filter(todo => UtilsTodo.accept(todo, filter)).length || 0,
           remaining: todos.filter(todo => !todo.completed).length || 0,
           compltedCount: todos.filter(todo => todo.completed).length || 0
         })
         )
       );
-  }
-
-  accept(todo: Todo, filter: string) {
-    switch (filter.toUpperCase()) {
-      case "ACTIVE":
-        return !todo.completed;
-      case "COMPLETED":
-        return todo.completed;
-      default:
-        return true;
-    }
   }
 
   add(newTodo: string): Observable<Todo> {
@@ -79,16 +67,18 @@ export class TodoService {
     );
   }
 
-  toggleAll(todos: Todo[], checked: boolean): Observable<Todo[]> {
-    let updates = todos.map(todo => {
-      todo.completed = checked;
+  toggleAll(filter: string, page: number, limit: number, checked: boolean): Observable<Todo[]> {
+    return this.getTodos(filter, page, limit).pipe(
+      switchMap(todos => {
+        let updates = todos.map(todo => {
+          todo.completed = checked;
+    
+          return this.update(todo);
+        });
 
-      return this.update(todo);
-    });
-
-    return combineLatest(updates).pipe(
-      tap(todos => console.log(todos))
-    );
+        return combineLatest(updates);
+      })
+    )
   }
 
   clearCompleted() {

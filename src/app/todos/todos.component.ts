@@ -1,11 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Todo } from "../todo";
+import { Todo } from "../todo.model";
 import { TodoService } from '../todo.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Pagination, UtilsPagination } from "../pagination.model";
-import { Observable, Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
-import { stringify } from '@angular/compiler/src/util';
+import { Pagination } from "../pagination.model";
+import { combineLatest, Observable, of, Subject } from 'rxjs';
+import { delay, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-todos',
@@ -26,7 +25,6 @@ export class TodosComponent implements OnInit {
     page: number,
     pageSize: number
   }>();
-  todos: Todo[] = [];
   allCompleted: boolean = false;
   filter: string;
   summary: {
@@ -85,8 +83,8 @@ export class TodosComponent implements OnInit {
     this.todoTerms.next(term);
   }
 
-  toggleAll(toggles: Todo[], checked: boolean) {
-    this.todoService.toggleAll(toggles, checked).subscribe(todos => {
+  toggleAll(checked: boolean) {
+    this.todoService.toggleAll(this.filter, this.pagination.currentPage, this.pagination.pageSize, checked).subscribe(todos => {
       this.refreash();
     })
   }

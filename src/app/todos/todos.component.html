@@ -7,7 +7,7 @@
     <section class="main" style="display: block;">
         <input id="toggle-all" #inputToggleAll class="toggle-all" type="checkbox"
         [checked]="allCompleted"
-        (change)="toggleAll(todos, inputToggleAll.checked)" />
+        (change)="toggleAll(inputToggleAll.checked)" />
         <label for="toggle-all"></label>
         <ul class="todo-list">
             <li *ngFor="let todo of todos$ | async">
