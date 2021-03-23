@@ -3,6 +3,9 @@ import { Todo } from "../todo";
 import { TodoService } from '../todo.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Pagination, UtilsPagination } from "../pagination.model";
+import { Observable, Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
+import { stringify } from '@angular/compiler/src/util';
 
 @Component({
   selector: 'app-todos',
@@ -15,15 +18,29 @@ export class TodosComponent implements OnInit {
     currentPage: 1,
     pageSize: 5,
   }
-  pagingTodos: Todo[];
 
   @Input() newTodo: string = "";
+  todos$: Observable<Todo[]>
+  private todoTerms = new Subject<{
+    filter: string,
+    page: number,
+    pageSize: number
+  }>();
   todos: Todo[] = [];
-  remaining: Number;
-  compltedCount: Number;
   allCompleted: boolean = false;
   filter: string;
-  filteredTodos: Todo[];
+  summary: {
+    totalCount: number,
+    filteredCount: number,
+    remaining: number,
+    compltedCount: number
+  } = {
+      totalCount: 0,
+      filteredCount: 0,
+      remaining: 0,
+      compltedCount: 0
+    }
+
   snapshot?: Todo;
   currentTodo?: Todo;
   edit: boolean = false;
@@ -31,42 +48,46 @@ export class TodosComponent implements OnInit {
   constructor(private todoService: TodoService, private router: Router, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
-    this.todoService.getTodos().subscribe(todos => {
-      this.todos = todos;
+    this.todos$ = this.todoTerms.pipe(
+      //避免相同的條件重複呼叫
+      distinctUntilChanged((x, y) => x.filter === y.filter && x.page === y.page && x.pageSize === y.pageSize),
+      tap(term => {
+        this.todoService.getSummary(term.filter).subscribe(summary => {
+          this.summary = summary;
+          this.pagination.count = summary.filteredCount;
+        });
+      }),
+      switchMap((term) => {
+        return this.todoService.getTodos(term.filter, term.page, term.pageSize);
+      })
+    )
+    this.route.params.subscribe(params => {
+      this.filter = params["filter"] || "all";
+      this.pagination.currentPage = +(params["page"] || 1);
+    });
+  }
 
-      this.route.params.subscribe(params => {
-        this.filter = params["filter"] || "all";
-        this.pagination.currentPage = +(params["page"] || 1);
-      });
-    })
+  refreash() {
+    this.todoService.getSummary(this.filter).subscribe(summary => {
+      this.summary = summary;
+      this.pagination.count = summary.filteredCount;
+    });
+    this.todos$ = this.todoService.getTodos(this.filter, this.pagination.currentPage, this.pagination.pageSize);
   }
 
   ngDoCheck(): void {
-    this.remaining = this.todos.filter(todo => !todo.completed).length || 0;
-    this.compltedCount = this.todos.filter(todo => !!todo.completed).length || 0;
-
-    switch (this.filter) {
-      case "active":
-        this.filteredTodos = this.todos.filter(todo => !todo.completed);
-        break;
-      case "completed":
-        this.filteredTodos = this.todos.filter(todo => !!todo.completed);
-        break;
-      default:
-        this.filteredTodos = this.todos;
-        break;
+    let term = {
+      filter: this.filter,
+      page: this.pagination.currentPage,
+      pageSize: this.pagination.pageSize
     }
 
-    this.pagination.count = this.filteredTodos.length || 0;
-    this.pagingTodos = UtilsPagination.GetPageData(this.filteredTodos, this.pagination);
-    this.allCompleted = this.pagingTodos.filter(todo => !todo.completed).length <= 0;
+    this.todoTerms.next(term);
   }
 
   toggleAll(toggles: Todo[], checked: boolean) {
     this.todoService.toggleAll(toggles, checked).subscribe(todos => {
-      toggles.forEach(toggle => {
-        toggle.completed = checked;
-      })
+      this.refreash();
     })
   }
 
@@ -74,9 +95,7 @@ export class TodosComponent implements OnInit {
     todo.completed = !todo.completed;
 
     this.todoService.update(todo).subscribe(newTodo => {
-      let todo = this.todos.find((todo) => todo.id === newTodo.id);
-
-      todo.completed = newTodo.completed;
+      this.refreash();
     });
   }
 
@@ -98,7 +117,7 @@ export class TodosComponent implements OnInit {
       this.currentTodo = null;
       this.edit = false;
 
-      todo = newTodo;
+      this.refreash();
     })
   }
 
@@ -106,9 +125,7 @@ export class TodosComponent implements OnInit {
     let id = todo.id;
 
     this.todoService.delete(id).subscribe(todo => {
-      let idx = this.todos.findIndex(m => m.id === id);
-
-      this.todos.splice(idx, 1);
+      this.refreash();
     })
   }
 
@@ -119,18 +136,14 @@ export class TodosComponent implements OnInit {
       return;
 
     this.todoService.add(newTodo).subscribe(newTodo => {
-      this.todos.push(newTodo);
+      this.refreash()
       this.newTodo = "";
     })
   }
 
   clearCompleted() {
     this.todoService.clearCompleted(this.todos).subscribe(todos => {
-      todos.forEach(todo => {
-        let idx = this.todos.findIndex(m => m.id === todo.id);
-
-        this.todos.splice(idx, 1);
-      })
+      this.refreash();
     })
   }
 

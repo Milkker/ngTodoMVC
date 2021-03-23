@@ -25,10 +25,6 @@ export class PaginationComponent implements OnInit {
   ngDoCheck(): void {
     this.maxPage = Math.ceil(this.pagination.count / this.pagination.pageSize);
 
-    if (this.pagination.currentPage > this.maxPage) {
-      this.pagination.currentPage = this.maxPage;
-    }
-
     this.setPageList();
   }
 
@@ -61,11 +57,11 @@ export class PaginationComponent implements OnInit {
   }
 
   goToPage(page: number) {
-    if (page < 1)
-      page = 1;
-
     if (page > this.maxPage)
       page = this.maxPage;
+
+    if (page < 1)
+      page = 1;
 
     if (this.pagination.currentPage == page)
       return;

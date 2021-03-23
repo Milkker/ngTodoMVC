@@ -1,4 +1,6 @@
 <section class="todoapp">
+    {{ filter }}<br/>
+    {{ pagination.currentPage }}<br/>
     <header class="header">
         <h1>todos</h1>
         <input class="new-todo" placeholder="what need to be done?" #todo [(ngModel)]="newTodo"
@@ -7,10 +9,10 @@
     <section class="main" style="display: block;">
         <input id="toggle-all" #inputToggleAll class="toggle-all" type="checkbox"
         [checked]="allCompleted"
-        (change)="toggleAll(pagingTodos, inputToggleAll.checked)" />
+        (change)="toggleAll(todos, inputToggleAll.checked)" />
         <label for="toggle-all"></label>
         <ul class="todo-list">
-            <li *ngFor="let todo of pagingTodos">
+            <li *ngFor="let todo of todos$ | async">
                 <div class="view" *ngIf="todo.id !== (currentTodo || {}).id" [class.completed]="todo.completed">
                     <input type="checkbox" class="toggle" [checked]="todo.completed" (change)="toggle(todo)" />
                     <label (dblclick)="editTodo(todo)">{{ todo.name }}</label>
@@ -23,13 +25,13 @@
     </section>
     <!-- for test -->
     <app-pagination [pagination]="pagination" (pageChange)="goToPage($event)"></app-pagination>
-    <footer *ngIf="todos.length > 0" class="footer">
-        <span class="todo-count"><strong>{{ remaining }}</strong> item{{ remaining > 1 ? 's' : '' }} left</span>
+    <footer *ngIf="summary.totalCount > 0" class="footer">
+        <span class="todo-count"><strong>{{ summary.remaining }}</strong> item{{ summary.remaining > 1 ? 's' : '' }} left</span>
         <ul class="filters">
             <li><a [routerLink]="['/']">All</a></li>
             <li><a [routerLink]="['/active']">Active</a></li>
             <li><a [routerLink]="['/completed']">Completed</a></li>
         </ul>
-        <button class="clear-complted" *ngIf="compltedCount > 0" (click)="clearCompleted()">Clear completed</button>
+        <button class="clear-complted" *ngIf="summary.compltedCount > 0" (click)="clearCompleted()">Clear completed</button>
     </footer>
 </section>
