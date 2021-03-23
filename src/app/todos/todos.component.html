@@ -20,6 +20,7 @@
             </li>
         </ul>
     </section>
+    <!-- for test -->
     <app-pagination [pagination]="pagination" (pageChange)="goToPage($event)"></app-pagination>
     <footer *ngIf="todos.length > 0" class="footer">
         <span class="todo-count"><strong>{{ remaining }}</strong> item{{ remaining > 1 ? 's' : '' }} left</span>
