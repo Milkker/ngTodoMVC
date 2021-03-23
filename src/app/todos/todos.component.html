@@ -6,7 +6,8 @@
     </header>
     <section class="main" style="display: block;">
         <input id="toggle-all" #inputToggleAll class="toggle-all" type="checkbox"
-            (change)="toggleAll(inputToggleAll.checked)" />
+        [checked]="allCompleted"
+        (change)="toggleAll(pagingTodos, inputToggleAll.checked)" />
         <label for="toggle-all"></label>
         <ul class="todo-list">
             <li *ngFor="let todo of pagingTodos">

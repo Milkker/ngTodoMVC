@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Todo } from "../todo";
 import { TodoService } from '../todo.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Pagination, UtilsPagination  } from "../pagination.model";
+import { Pagination, UtilsPagination } from "../pagination.model";
 
 @Component({
   selector: 'app-todos',
@@ -21,6 +21,7 @@ export class TodosComponent implements OnInit {
   todos: Todo[] = [];
   remaining: Number;
   compltedCount: Number;
+  allCompleted: boolean = false;
   filter: string;
   filteredTodos: Todo[];
   snapshot?: Todo;
@@ -30,39 +31,53 @@ export class TodosComponent implements OnInit {
   constructor(private todoService: TodoService, private router: Router, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
-    this.todos = this.todoService.getTodos();
-    this.route.params.subscribe(params => {
-      this.filter = params["filter"] || "all";
+    this.todoService.getTodos().subscribe(todos => {
+      this.todos = todos;
 
-      switch (this.filter) {
-        case "active":
-          this.filteredTodos = this.todos.filter(todo => !todo.completed);
-          break;
-        case "completed":
-          this.filteredTodos = this.todos.filter(todo => !!todo.completed);
-          break;
-        default:
-          this.filteredTodos = this.todos;
-          break;
-      }
-
-      this.pagination.currentPage = +(params["page"] || 1);
-    });
+      this.route.params.subscribe(params => {
+        this.filter = params["filter"] || "all";
+        this.pagination.currentPage = +(params["page"] || 1);
+      });
+    })
   }
 
   ngDoCheck(): void {
     this.remaining = this.todos.filter(todo => !todo.completed).length || 0;
     this.compltedCount = this.todos.filter(todo => !!todo.completed).length || 0;
+
+    switch (this.filter) {
+      case "active":
+        this.filteredTodos = this.todos.filter(todo => !todo.completed);
+        break;
+      case "completed":
+        this.filteredTodos = this.todos.filter(todo => !!todo.completed);
+        break;
+      default:
+        this.filteredTodos = this.todos;
+        break;
+    }
+
     this.pagination.count = this.filteredTodos.length || 0;
     this.pagingTodos = UtilsPagination.GetPageData(this.filteredTodos, this.pagination);
+    this.allCompleted = this.pagingTodos.filter(todo => !todo.completed).length <= 0;
   }
 
-  toggleAll(checked: boolean) {
-    this.todoService.toggleAll(checked);
+  toggleAll(toggles: Todo[], checked: boolean) {
+    this.todoService.toggleAll(toggles, checked).subscribe(todos => {
+      toggles.forEach(toggle => {
+        toggle.completed = checked;
+      })
+    })
   }
 
   toggle(todo: Todo) {
     todo.completed = !todo.completed;
+
+    this.todoService.update(todo).subscribe(newTodo => {
+      let todo = this.todos.find((todo) => todo.id === newTodo.id);
+
+      todo.completed = newTodo.completed;
+    });
   }
 
   editTodo(todo: Todo) {
@@ -78,14 +93,23 @@ export class TodosComponent implements OnInit {
   }
 
   update(todo: Todo) {
-    this.todoService.update(todo);
-    this.snapshot = null;
-    this.currentTodo = null;
-    this.edit = false;
+    this.todoService.update(todo).subscribe((newTodo) => {
+      this.snapshot = null;
+      this.currentTodo = null;
+      this.edit = false;
+
+      todo = newTodo;
+    })
   }
 
   remove(todo: Todo) {
-    this.todoService.delete(todo.id);
+    let id = todo.id;
+
+    this.todoService.delete(id).subscribe(todo => {
+      let idx = this.todos.findIndex(m => m.id === id);
+
+      this.todos.splice(idx, 1);
+    })
   }
 
   add(newTodo: string) {
@@ -94,12 +118,20 @@ export class TodosComponent implements OnInit {
     if (!newTodo)
       return;
 
-    this.todoService.add(newTodo);
-    this.newTodo = "";
+    this.todoService.add(newTodo).subscribe(newTodo => {
+      this.todos.push(newTodo);
+      this.newTodo = "";
+    })
   }
 
   clearCompleted() {
-    this.todoService.clearCompleted();
+    this.todoService.clearCompleted(this.todos).subscribe(todos => {
+      todos.forEach(todo => {
+        let idx = this.todos.findIndex(m => m.id === todo.id);
+
+        this.todos.splice(idx, 1);
+      })
+    })
   }
 
   goToPage(page: number) {
