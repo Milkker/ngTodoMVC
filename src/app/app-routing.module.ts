@@ -3,9 +3,8 @@ import { RouterModule, Routes } from '@angular/router';
 import { TodosComponent } from "./todos/todos.component";
 
 const routes: Routes = [
-  { path: '', component: TodosComponent, pathMatch: 'full' },
-  { path: ':filter', component: TodosComponent, pathMatch: 'full'},
-  { path: ':filter/:page', component: TodosComponent }
+  { path: '', redirectTo: '/all', pathMatch: 'full' },
+  { path: ':filter', component: TodosComponent }
 ];
 
 @NgModule({

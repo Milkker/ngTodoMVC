@@ -17,7 +17,9 @@
                     <button class="destroy" (click)="remove(todo)"></button>
                 </div>
                 <input class="edit" *ngIf="todo.id === (currentTodo || {}).id" [(ngModel)]="currentTodo.name"
-                    (keyup.esc)="cancelEdit()" (keyup.enter)="update(currentTodo)" autofocus />
+                    (keyup.esc)="cancelEdit()"
+                    (focusout)="cancelEdit()"
+                    (keyup.enter)="update(currentTodo)" autofocus />
             </li>
         </ul>
     </section>
@@ -26,9 +28,9 @@
     <footer *ngIf="summary.totalCount > 0" class="footer">
         <span class="todo-count"><strong>{{ summary.remaining }}</strong> item{{ summary.remaining > 1 ? 's' : '' }} left</span>
         <ul class="filters">
-            <li><a [routerLink]="['/']">All</a></li>
-            <li><a [routerLink]="['/active']">Active</a></li>
-            <li><a [routerLink]="['/completed']">Completed</a></li>
+            <li><a [routerLink]="['/']" [class.active]="filter === 'all'">All</a></li>
+            <li><a [routerLink]="['/active']" [class.active]="filter === 'active'">Active</a></li>
+            <li><a [routerLink]="['/completed']" [class.active]="filter === 'completed'">Completed</a></li>
         </ul>
         <button class="clear-complted" *ngIf="summary.compltedCount > 0" (click)="clearCompleted()">Clear completed</button>
     </footer>

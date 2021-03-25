@@ -41,7 +41,6 @@ export class TodosComponent implements OnInit {
 
   snapshot?: Todo;
   currentTodo?: Todo;
-  edit: boolean = false;
 
   constructor(private todoService: TodoService, private router: Router, private route: ActivatedRoute) { }
 
@@ -59,10 +58,14 @@ export class TodosComponent implements OnInit {
         return this.todoService.getTodos(term.filter, term.page, term.pageSize);
       })
     )
+
     this.route.params.subscribe(params => {
       this.filter = params["filter"] || "all";
-      this.pagination.currentPage = +(params["page"] || 1);
     });
+
+    this.route.queryParams.subscribe(params => {
+      this.pagination.currentPage = +(params["page"] || 1);
+    })
   }
 
   refreash() {
@@ -100,20 +103,17 @@ export class TodosComponent implements OnInit {
   editTodo(todo: Todo) {
     this.snapshot = Object.assign({}, todo)
     this.currentTodo = Object.assign({}, todo)
-    this.edit = true;
   }
 
   cancelEdit() {
     this.snapshot = null;
     this.currentTodo = null;
-    this.edit = false;
   }
 
   update(todo: Todo) {
     this.todoService.update(todo).subscribe((newTodo) => {
       this.snapshot = null;
       this.currentTodo = null;
-      this.edit = false;
 
       this.refreash();
     })
@@ -146,6 +146,6 @@ export class TodosComponent implements OnInit {
   }
 
   goToPage(page: number) {
-    this.router.navigate(['/', this.filter, page], { relativeTo: this.route });
+    this.router.navigate(['/', this.filter], { queryParams: { page: page }, relativeTo: this.route });
   }
 }
