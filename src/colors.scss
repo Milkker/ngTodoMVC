@@ -1,0 +1,13 @@
+@use 'sass:color' as color;
+
+@function brighter($color, $times: 1) {
+    @return color.adjust($color, $lightness: +12.5% * $times);
+}
+
+@function darker($color, $times: 1) {
+    @return color.adjust($color, $lightness: -12.5% * $times);
+}
+
+$rose_red: #FF0080;
+$white: #fff;
+$gray: darker($white, 2);

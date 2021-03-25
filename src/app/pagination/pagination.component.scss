@@ -1,10 +1,14 @@
+@use '../../colors.scss' as colors;
+@use 'sass:color' as color;
+
 .pagination {
+    border-top: 1px solid #e6e6e6;
     display: inline-block;
     position: relative;
     width: 100%;
-    height: 30px;
+    height: 50px;
     box-sizing: border-box;
-    padding: 6px 10px;
+    padding: 16px 10px;
 
     ul {
         list-style: none;
@@ -19,7 +23,7 @@
     text-align: center;
     position: absolute;
     left: 0;
-    top: 0;
+    top: 15px;
     width: 100%;
     padding: 0;
     margin: 0;
@@ -31,38 +35,47 @@
         height: 24px;
         line-height: 1.7;
         text-align: center;
-        border: 1px solid #999;
+        border: 1px solid #eee;
+        border-radius: 5px;
         cursor: pointer;
 
         &.active {
-            background-color: red;
-            color: #fff;
+            background-color: color.adjust(colors.$gray, $alpha: -0.5);
+            color: black;
+            font-weight: bold;
         }
+    }
+}
+
+.page-btn {
+    position: absolute;
+    cursor: pointer;
+    line-height: 1.5;
+    font-weight: bold;
+    top: 15px;
+    color: colors.$gray;
+
+    &:hover {
+        color: black;
     }
 }
 
 .prev-page {
     float: left;
     text-align: left;
-    position: absolute;
     left: 16px;
-    top: 0;
-    cursor: pointer;
 
     &::before {
-        content: '<'
+        content: "<";
     }
 }
 
 .next-page {
     float: right;
     text-align: right;
-    position: absolute;
     right: 16px;
-    top: 0;
-    cursor: pointer;
 
     &::before {
-        content: '>'
+        content: ">";
     }
 }
